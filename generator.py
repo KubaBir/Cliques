@@ -1,4 +1,4 @@
-from random import sample, randint
+from random import randint, sample
 
 
 class Graph():
@@ -18,12 +18,27 @@ class Graph():
             for j in range(i+1, n):
                 temp.append([i, j])
         temp = sample(temp, edges)
-        print(temp)
+        # print(temp)
         for i in temp:
             self.adjecency_matrix[i[0]][i[1]] = 1
             self.points[i[0]].next.append(self.points[i[1]])
             self.adjecency_matrix[i[1]][i[0]] = 1
             self.points[i[1]].next.append(self.points[i[0]])
+
+    def __str__(self):
+        res = "Adjecency matrix:\n"
+        res += "\n".join([f" {row}" for row in self.adjecency_matrix])
+        res += "\nSuccessor list:\n"
+        for point in self.points:
+            res += f" {point}: ["
+            for x in point.next:
+                res += str(x) + ", "
+            if point.next != []:
+                res = res[:-2]
+
+            res += ']\n'
+
+        return res
 
 
 class Point:
@@ -42,10 +57,6 @@ class Point:
         return str(self.id)
 
 
-graph = Graph(5)
+def gen_graph(n, s=50):
+    return Graph(n, s)
 # print(*graph.adjecency_matrix, sep='\n')
-
-for point in graph.points:
-    for i in point.next:
-        print(i, end=' ')
-    print()

@@ -33,10 +33,21 @@ def get_cliques(graph):
     graph.get_adj()
     for k, cliques in k_cliques(graph):
         if k > 2:
-            print('%d-cliques = %d, %s.' % (k, len(cliques), cliques))
+            # print('%d-cliques = %d, %s.' % (k, len(cliques), cliques))
+            yield k, cliques
+
+
+def calculate_area(k, cliques):
+    for clique in cliques:
+        print(clique)
 
 
 nodes, edges = 6, 10
 graph = generator.gen_graph(6, 80)
 
-get_cliques(graph)
+for k, cliques in get_cliques(graph):
+    calculate_area(k, cliques)
+    # print(*cliques)
+    # print(cliques[0])
+    # for el in cliques[0]:
+    #     print(el.x)

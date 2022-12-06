@@ -1,5 +1,5 @@
-a = [1, 2, 3, 3]
-print(a)
-
-a = list(set(a))
-print(a)
+p = []
+points = frozenset([1, 2, 3, 4])
+for x in points:
+    p.append(x)
+print(p)

@@ -3,10 +3,8 @@ from random import randint, sample
 
 class Graph():
     n = 0
-    # saturation in percent
     adjecency_matrix = []
     points = []
-    # degrees = []
     edges = []
     nedges = 0
 
@@ -15,24 +13,16 @@ class Graph():
         self.adjecency_matrix = [[0 for i in range(n)] for i in range(n)]
         self.points = [
             Point(i, randint(0, 100), randint(0, 100)) for i in range(n)]
-        # self.degrees = [0 for _ in range(n)]
-        temp = []
         self.nedges = int((n*(n-1)*saturation)/200)
         self.edges = []
+        temp = []
         for i in range(n):
             for j in range(i+1, n):
                 temp.append([i, j])
         temp = sample(temp, self.nedges)
-
         for i in temp:
             self.adjecency_matrix[i[0]][i[1]] = 1
             self.adjecency_matrix[i[1]][i[0]] = 1
-            # self.points[i[1]].degree += 1
-            # self.points[i[0]].degree += 1
-            # self.degrees[i[0]] += 1
-            # self.degrees[i[1]] += 1
-            # self.points[i[0]].next.append(self.points[i[1]])
-            # self.points[i[1]].next.append(self.points[i[0]])
 
         for row_id, row in enumerate(self.adjecency_matrix):
             for el_id, el in enumerate(row):
@@ -43,17 +33,17 @@ class Graph():
     def __str__(self):
         res = "Adjecency matrix:\n"
         res += "\n".join([f" {row}" for row in self.adjecency_matrix])
-        res += "\n\nSuccessor list:\n"
-        for point in self.points:
-            res += f" {point}: ["
-            for x in point.next:
-                res += str(x) + ", "
-            if point.next != []:
-                res = res[:-2]
+        # res += "\n\nSuccessor list:\n"
+        # for point in self.points:
+        #     res += f" {point}: ["
+        #     for x in point.next:
+        #         res += str(x) + ", "
+        #     if point.next != []:
+        #         res = res[:-2]
 
-            res += ']\n'
-        res += "\nDegrees:\n"
-        res += "\n".join([f" {id}: {d} " for id, d in enumerate(self.degrees)])
+        # res += ']\n'
+        # res += "\nDegrees:\n"
+        # res += "\n".join([f" {id}: {d} " for id, d in enumerate(self.degrees)])
 
         return res
 
@@ -98,4 +88,3 @@ class Point:
 
 def gen_graph(n, s=50):
     return Graph(n, s)
-# print(*graph.adjecency_matrix, sep='\n')

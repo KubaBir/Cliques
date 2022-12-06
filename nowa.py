@@ -28,41 +28,18 @@ def k_cliques(graph):
 
         # remove duplicates
         cliques = list(map(set, cliques_1))
+        cliques = [set(item)
+                   for item in set(frozenset(item) for item in cliques)]
+
         k += 1
 
 
 def get_cliques(graph):
-    graph.get_adj()
+    # graph.get_adj()
     for k, cliques in k_cliques(graph):
         if k > 2:
             # print('%d-cliques = %d, %s.' % (k, len(cliques), cliques))
             yield k, cliques
-
-
-def get_convex_hullw(points):
-
-    TURN_LEFT, TURN_RIGHT, TURN_NONE = (1, -1, 0)
-
-    def turn(p, q, r):
-        res = (q[0] - p[0])*(r[1] - p[1]) - (r[0] - p[0])*(q[1] - p[1])
-        if res == 0:
-            return 0
-        elif res > 0:
-            return 1
-        else:
-            return 2
-
-    def _keep_left(hull, r):
-        while len(hull) > 1 and turn(hull[-2], hull[-1], r) != TURN_LEFT:
-            hull.pop()
-        if not len(hull) or hull[-1] != r:
-            hull.append(r)
-        return hull
-
-    points = sorted(points)
-    l = reduce(_keep_left, points, [])
-    u = reduce(_keep_left, reversed(points), [])
-    return l.extend(u[i] for i in range(1, len(u) - 1)) or l
 
 
 def convex_hull(inp, n):
@@ -110,6 +87,7 @@ def convex_hull(inp, n):
 
     p0, points = find_start(inp)
     points = sorted(points, key=cmp_to_key(compare))
+
     m = 1
     for i in range(1, n):
         while ((i < n - 1) and
@@ -132,30 +110,46 @@ def convex_hull(inp, n):
             stack.pop()
         stack.append(points[i])
 
-    for el in stack:
-        print(el.x, el.y)
+    # for el in stack:
+    #     print(el.x, el.y)
 
     return stack
 
 
 def calculate_area(k, cliques):
     for clique in cliques:
-        convex_hull(clique, k)
+        hull = convex_hull(clique, k)
+        area = 0
+        for i in range(len(hull) - 1, -1, -1):
+            area += hull[i-1].x * hull[i].y - hull[i].x * hull[i-1].y
+        area = area/2
+        yield hull, area
 
 
 input_points = [(0, 3), (1, 1), (2, 2), (4, 4),
-                (0, 0), (1, 2), (3, 1), (3, 3)]
+                (0, 0), (1, 2), (3, 1), (3, 3), (5, 2)]
 points = []
-for point in input_points:
-    points.append(generator.Point(0, point[0], point[1]))
+for id, point in enumerate(input_points):
+    points.append(generator.Point(id, point[0], point[1]))
 n = len(points)
-calculate_area(n, [points])
 
 
-# graph = generator.gen_graph(6, 80)
-# for k, cliques in get_cliques(graph):
-#     calculate_area(k, cliques)
-# print(*cliques)
-# print(cliques[0])
-# for el in cliques[0]:
-#     print(el.x)
+# a = calculate_area(n, [points])
+# print(list(a))
+
+
+graph = generator.gen_graph(10, 80)
+cliques = get_cliques(graph)
+# for k, clique in cliques:
+#     print(k, ": ", len(clique), sep='')
+
+for k, kcliques in cliques:
+    if k != 5:
+        continue
+    for clique in kcliques:
+        print(clique)
+
+        # print(cliques[0])
+        # for el in cliques[0]:
+        #     print(el.x)\
+print()

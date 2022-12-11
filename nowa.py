@@ -1,6 +1,11 @@
 from functools import cmp_to_key
 from itertools import combinations
 
+<<<<<<< HEAD
+=======
+# import networkx as nx
+
+>>>>>>> 081e28bc17c18277628f2dfdff1b40d464f1b7f9
 import generator
 
 
@@ -24,18 +29,15 @@ def k_cliques(graph):
                 cliques_1.add(tuple(u | w))
 
         # remove duplicates
-        cliques = list(map(set, cliques_1))
-        cliques = [set(item)
-                   for item in set(frozenset(item) for item in cliques)]
+        cliques = set(list(map(frozenset, cliques_1)))
+        # cliques = [set(item) for item in set(cliques)]
 
         k += 1
 
 
 def get_cliques(graph):
-    # graph.get_adj()
     for k, cliques in k_cliques(graph):
         if k > 2:
-            # print('%d-cliques = %d, %s.' % (k, len(cliques), cliques))
             yield k, cliques
 
 

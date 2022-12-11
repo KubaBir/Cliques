@@ -1,8 +1,5 @@
-import math
 from functools import cmp_to_key
 from itertools import combinations
-
-import networkx as nx
 
 import generator
 
@@ -116,40 +113,35 @@ def convex_hull(inp, n):
     return stack
 
 
-def calculate_area(k, cliques):
-    for clique in cliques:
+def calculate_area(k, kcliques):
+    for clique in kcliques:
         hull = convex_hull(clique, k)
         area = 0
         for i in range(len(hull) - 1, -1, -1):
             area += hull[i-1].x * hull[i].y - hull[i].x * hull[i-1].y
         area = area/2
-        yield hull, area
+        yield clique, hull, area
 
 
-input_points = [(0, 3), (1, 1), (2, 2), (4, 4),
-                (0, 0), (1, 2), (3, 1), (3, 3), (5, 2)]
-points = []
-for id, point in enumerate(input_points):
-    points.append(generator.Point(id, point[0], point[1]))
-n = len(points)
-
-
-# a = calculate_area(n, [points])
-# print(list(a))
-
-
-graph = generator.gen_graph(10, 80)
+n = 10
+graph = generator.gen_graph(n, 80)
 cliques = get_cliques(graph)
-# for k, clique in cliques:
-#     print(k, ": ", len(clique), sep='')
 
+f = open("results.txt", "w")
+f.write("Ilosci k-klik:\n")
+
+results = []
 for k, kcliques in cliques:
-    if k != 5:
-        continue
-    for clique in kcliques:
-        print(clique)
+    print(k, ": ", len(kcliques), sep='')
+    f.write(str(k) + ": " + str(len(kcliques)) + "\n")
+    x = calculate_area(k, kcliques)
+    for i in x:
+        results.append(i)
+results.sort(key=lambda x: x[2])
+for item in results:
+    print(*item)
 
-        # print(cliques[0])
-        # for el in cliques[0]:
-        #     print(el.x)\
-print()
+f.write("\nWyniki w formacie (klika, otoczka, pole):\n")
+for item in results:
+    f.write(str(item)+"\n")
+f.close()

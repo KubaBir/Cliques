@@ -10,25 +10,29 @@ class Graph():
 
     def __init__(self, n, saturation=50):
         self.n = n
+        self.edges = []
         self.adjecency_matrix = [[0 for i in range(n)] for i in range(n)]
+        # Generowanie n punktów w układzie współrzędnych
         self.points = [
             Point(i, randint(0, 100), randint(0, 100)) for i in range(n)]
-        self.nedges = int((n*(n-1)*saturation)/200)
-        self.edges = []
-        temp = []
+        # Oblicza ilość krawędzi dla danego nasycenia podanego w procentach
+        self.n_edges = int((n*(n-1)*saturation)/200)
+
+        # Generowanie wszystkich możliwych krawędzi
+        possible_edges = []
         for i in range(n):
             for j in range(i+1, n):
-                temp.append([i, j])
-        temp = sample(temp, self.nedges)
-        for i in temp:
-            self.adjecency_matrix[i[0]][i[1]] = 1
-            self.adjecency_matrix[i[1]][i[0]] = 1
+                possible_edges.append([i, j])
 
-        for row_id, row in enumerate(self.adjecency_matrix):
-            for el_id, el in enumerate(row):
-                if el == 1:
-                    self.edges.append(
-                        (self.points[row_id], self.points[el_id]))
+        # Wybieranie odpowiedniej ilości krawędzi
+        edges = sample(possible_edges, self.n_edges)
+        # Wpisanie krawędzi do grafu
+        for edge in edges:
+            # Tablica sąsiedztwa
+            self.adjecency_matrix[edge[0]][edge[1]] = 1
+            self.adjecency_matrix[edge[1]][edge[0]] = 1
+            # Lista krawędzi
+            self.edges.append((self.points[edge[0]], self.points[edge[1]]))
 
     def __str__(self):
         res = "Adjecency matrix:\n"
@@ -45,7 +49,7 @@ class Graph():
         # res += "\nDegrees:\n"
         # res += "\n".join([f" {id}: {d} " for id, d in enumerate(self.degrees)])
 
-        return res
+        return res + "\n" + str(self.edges)
 
     def has_edge(self, u, v):
         if self.adjecency_matrix[u.id][v.id] == 1:

@@ -1,17 +1,12 @@
 from functools import cmp_to_key
 from itertools import combinations
 
-<<<<<<< HEAD
-=======
-# import networkx as nx
-
->>>>>>> 081e28bc17c18277628f2dfdff1b40d464f1b7f9
 import generator
 
 
 def k_cliques(graph):
-    # cliques = [{i, j} for i, j in graph.edges() if i != j]
     cliques = []
+    # Poczatkowa lista klik składa się z każdych dwóch połączonych wierzchołków
     for edge in graph.edges:
         cliques.append({edge[0], edge[1]})
     k = 2
@@ -19,19 +14,17 @@ def k_cliques(graph):
     while cliques:
         yield k, cliques
 
-        # merge k-cliques into (k+1)-cliques
+        # Wyznacz wszystkie możliwe "scalone" kliki
         cliques_1 = set()
         for u, v in combinations(cliques, 2):
-            # w = wierzcholki nienalezace do 2 klik na raz
+            # w = Wierzchołki należące do tylko jednej z klik
             w = u ^ v
-            # jesli sa takie 2, oraz są one połączone, tworzą one nową klikę
+            # Jeśli sa takie dokładnie 2, oraz są one połączone, tworzą nową klikę
             if len(w) == 2 and graph.has_edge(*w):
                 cliques_1.add(tuple(u | w))
 
-        # remove duplicates
+        # Usuwanie zduplikowanych klik
         cliques = set(list(map(frozenset, cliques_1)))
-        # cliques = [set(item) for item in set(cliques)]
-
         k += 1
 
 
@@ -84,35 +77,33 @@ def convex_hull(inp, n):
                 return -1
             return 1
 
+    # Wyznacz pierwszy element otoczki (najmniejsze y oraz x)
     p0, points = find_start(inp)
+    # Posortuj wierzchołki wg. kąta który tworzą z p0 i osią X (rosnąco)
     points = sorted(points, key=cmp_to_key(compare))
 
     m = 1
+    # Pomiń punkty współliniowe
     for i in range(1, n):
-        while ((i < n - 1) and
-               (orientation(p0, points[i], points[i + 1]) == 0)):
+        while ((i < n - 1) and (orientation(p0, points[i], points[i + 1]) == 0)):
             i += 1
-            # nie dodawaj punktow wspoliniowych
         points[m] = points[i]
         m += 1
-    if m < 3:
-        return 0
 
-    stack = []
-    stack.append(points[0])
-    stack.append(points[1])
-    stack.append(points[2])
+    res = []
+    # Pierwszy wierzchołek z góry jest dobry
+    res.append(points[0])
+    # Ustawiamy wartość początkową kolejnych dwóch - zostaną one ewentualnie zmienione
+    res.append(points[1])
+    res.append(points[2])
 
     for i in range(3, m):
-        while ((len(stack) > 1) and
-               (orientation(stack[-2], stack[-1], points[i]) != 2)):
-            stack.pop()
-        stack.append(points[i])
+        # Jeśli mamy skręt w prawo, ostatni wierzchołek nie należy do otoczki
+        while ((len(res) > 1) and (orientation(res[-2], res[-1], points[i]) != 2)):
+            res.pop()
+        res.append(points[i])
 
-    # for el in stack:
-    #     print(el.x, el.y)
-
-    return stack
+    return res
 
 
 def calculate_area(k, kcliques):
@@ -125,13 +116,13 @@ def calculate_area(k, kcliques):
         yield clique, hull, area
 
 
-n = 10
-graph = generator.gen_graph(n, 80)
+n = 100
+graph = generator.gen_graph(n, 30)
 cliques = get_cliques(graph)
 
 f = open("results.txt", "w")
 f.write("Ilosci k-klik:\n")
-
+# print(graph)
 results = []
 for k, kcliques in cliques:
     print(k, ": ", len(kcliques), sep='')
@@ -139,9 +130,15 @@ for k, kcliques in cliques:
     x = calculate_area(k, kcliques)
     for i in x:
         results.append(i)
-results.sort(key=lambda x: x[2])
-for item in results:
-    print(*item)
+results.sort(key=lambda x: x[2], reverse=True)
+
+print("\nRanking:")
+for i in range(min(len(results), 10)):
+    print(i+1)
+    print(" Klika:", *results[i][0])
+    print(" Otoczka:", *results[i][1])
+    print(" Pole:", results[i][2])
+
 
 f.write("\nWyniki w formacie (klika, otoczka, pole):\n")
 for item in results:

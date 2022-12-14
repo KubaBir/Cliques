@@ -1,5 +1,6 @@
 from functools import cmp_to_key
 from itertools import combinations
+from time import time
 
 import generator
 
@@ -117,30 +118,33 @@ def calculate_area(k, kcliques):
 
 
 n = 100
-graph = generator.gen_graph(n, 30)
-cliques = get_cliques(graph)
 
 f = open("results.txt", "w")
-f.write("Ilosci k-klik:\n")
-# print(graph)
-results = []
-for k, kcliques in cliques:
-    print(k, ": ", len(kcliques), sep='')
-    f.write(str(k) + ": " + str(len(kcliques)) + "\n")
-    x = calculate_area(k, kcliques)
-    for i in x:
-        results.append(i)
-results.sort(key=lambda x: x[2], reverse=True)
+for n in range(20, 201, 20):
+    graph = generator.gen_graph(n, 30)
+    start = time()
+    cliques = get_cliques(graph)
+    # f.write("Ilosci k-klik:\n")
+    # print(graph)
+    results = []
+    for k, kcliques in cliques:
+        print(k, ": ", len(kcliques), sep='')
+        # f.write(str(k) + ": " + str(len(kcliques)) + "\n")
+        x = calculate_area(k, kcliques)
+        for i in x:
+            results.append(i)
+    results.sort(key=lambda x: x[2], reverse=True)
+    f.write(str(n)+";"+str(time()-start)+"\n")
 
-print("\nRanking:")
-for i in range(min(len(results), 10)):
-    print(i+1)
-    print(" Klika:", *results[i][0])
-    print(" Otoczka:", *results[i][1])
-    print(" Pole:", results[i][2])
+# print("\nRanking:")
+# for i in range(min(len(results), 10)):
+#     print(i+1)
+#     print(" Klika:", *results[i][0])
+#     print(" Otoczka:", *results[i][1])
+#     print(" Pole:", results[i][2])
 
 
-f.write("\nWyniki w formacie (klika, otoczka, pole):\n")
-for item in results:
-    f.write(str(item)+"\n")
+# f.write("\nWyniki w formacie (klika, otoczka, pole):\n")
+# for item in results:
+#     f.write(str(item)+"\n")
 f.close()

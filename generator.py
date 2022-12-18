@@ -49,7 +49,7 @@ class Graph():
         # res += "\nDegrees:\n"
         # res += "\n".join([f" {id}: {d} " for id, d in enumerate(self.degrees)])
 
-        return res + "\n" + str(self.edges)
+        return res + "\nAdjecancy list:\n " + str(self.edges) + "\n\n"
 
     def has_edge(self, u, v):
         if self.adjecency_matrix[u.id][v.id] == 1:

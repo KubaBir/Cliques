@@ -11,7 +11,6 @@ def k_cliques(graph):
     for edge in graph.edges:
         cliques.append({edge[0], edge[1]})
     k = 2
-    print(len(cliques))
 
     while cliques:
         yield k, cliques
@@ -118,23 +117,22 @@ def calculate_area(k, kcliques):
         yield clique, hull, area
 
 
-n = 100
-graph = generator.gen_graph(n, 30)
-start = time()
+n = 10
+graph = generator.gen_graph(n, 50)
 
 cliques = get_cliques(graph)
 
 f = open("results.txt", "w")
 f.write("Ilosci k-klik:\n")
-# print(graph)
+print(graph)
 results = []
+print("Ilosci k-klik:")
 for k, kcliques in cliques:
     print(k, ": ", len(kcliques), sep='')
     f.write(str(k) + ": " + str(len(kcliques)) + "\n")
     x = calculate_area(k, kcliques)
     for i in x:
         results.append(i)
-print(len(results))
 results.sort(key=lambda x: x[2], reverse=True)
 
 print("\nRanking:")
@@ -149,4 +147,3 @@ f.write("\nWyniki w formacie (klika, otoczka, pole):\n")
 for item in results:
     f.write(str(item)+"\n")
 f.close()
-print(time()-start)

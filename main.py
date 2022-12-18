@@ -1,5 +1,6 @@
 from functools import cmp_to_key
 from itertools import combinations
+from time import time
 
 import generator
 
@@ -10,6 +11,7 @@ def k_cliques(graph):
     for edge in graph.edges:
         cliques.append({edge[0], edge[1]})
     k = 2
+    print(len(cliques))
 
     while cliques:
         yield k, cliques
@@ -77,13 +79,13 @@ def convex_hull(inp, n):
                 return -1
             return 1
 
-    # Wyznacz pierwszy element otoczki (najmniejsze y oraz x)
+    # Wyznacz pierwszy element otoczki (najmniejsze y oraz x) O(n)
     p0, points = find_start(inp)
-    # Posortuj wierzchołki wg. kąta który tworzą z p0 i osią X (rosnąco)
+    # Posortuj wierzchołki wg. kąta który tworzą z p0 i osią X (rosnąco) O(n^2)
     points = sorted(points, key=cmp_to_key(compare))
 
     m = 1
-    # Pomiń punkty współliniowe
+    # Pomiń punkty współliniowe O(n)
     for i in range(1, n):
         while ((i < n - 1) and (orientation(p0, points[i], points[i + 1]) == 0)):
             i += 1
@@ -118,6 +120,8 @@ def calculate_area(k, kcliques):
 
 n = 100
 graph = generator.gen_graph(n, 30)
+start = time()
+
 cliques = get_cliques(graph)
 
 f = open("results.txt", "w")
@@ -130,6 +134,7 @@ for k, kcliques in cliques:
     x = calculate_area(k, kcliques)
     for i in x:
         results.append(i)
+print(len(results))
 results.sort(key=lambda x: x[2], reverse=True)
 
 print("\nRanking:")
@@ -144,3 +149,4 @@ f.write("\nWyniki w formacie (klika, otoczka, pole):\n")
 for item in results:
     f.write(str(item)+"\n")
 f.close()
+print(time()-start)
